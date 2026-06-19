@@ -117,7 +117,7 @@ st.caption("Seleccioná la carpeta del alumno o arrastrá los archivos acá.")
 
 doc_files = st.file_uploader(
     "Archivos",
-    type=["pdf", "docx", "xlsx", "xlsm"],
+    type=["pdf", "docx", "doc", "xlsx", "xlsm", "xls"],
     accept_multiple_files=True,
     label_visibility="collapsed",
     key="docs_upload",
