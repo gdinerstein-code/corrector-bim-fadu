@@ -12,7 +12,7 @@ import pdfplumber
 from docx import Document
 import google.generativeai as genai
 
-MODELO    = "gemini-2.0-flash"   # gratis, rápido, muy capaz
+MODELO    = "gemini-1.5-flash-latest"   # gratis, rápido, muy capaz
 MAX_CHARS = 60_000
 
 
