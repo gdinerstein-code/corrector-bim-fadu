@@ -10,9 +10,9 @@ import io
 import openpyxl
 import pdfplumber
 from docx import Document
-import google.generativeai as genai
+from google import genai
 
-MODELO    = "gemini-1.5-flash-latest"   # gratis, rápido, muy capaz
+MODELO    = "gemini-2.0-flash"   # gratis, rápido, muy capaz
 MAX_CHARS = 60_000
 
 
@@ -236,9 +236,11 @@ def evaluar_documento(api_key: str, doc_type: str, doc_text: str, criteria: list
         return [{"id": i, "criterio": c[0], "estado": "N/C", "obs": "Documento no provisto"}
                 for i, c in enumerate(criteria)]
 
-    genai.configure(api_key=api_key)
-    model = genai.GenerativeModel(MODELO)
-    response = model.generate_content(_build_prompt(doc_type, doc_text, criteria))
+    client = genai.Client(api_key=api_key)
+    response = client.models.generate_content(
+        model=MODELO,
+        contents=_build_prompt(doc_type, doc_text, criteria),
+    )
     raw = response.text.strip()
 
     m = re.search(r'\{.*\}', raw, re.DOTALL)
