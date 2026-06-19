@@ -4,6 +4,7 @@ Flujo: subís planilla + archivos del alumno → IA evalúa → revisás → des
 """
 
 import streamlit as st
+import streamlit.components.v1 as components
 import pandas as pd
 from evaluador import (
     EIR_CRITERIA, BEP_CRITERIA,
@@ -112,7 +113,7 @@ st.divider()
 
 # ── PASO 3: Archivos del alumno ────────────────────────────────────────────────
 st.markdown('<p class="step-header">③ Subí los archivos del alumno</p>', unsafe_allow_html=True)
-st.caption("Abrí la carpeta del alumno en el Explorador, seleccioná todo (Ctrl+A) y arrastrá acá.")
+st.caption("Seleccioná la carpeta del alumno o arrastrá los archivos acá.")
 
 doc_files = st.file_uploader(
     "Archivos",
@@ -121,6 +122,30 @@ doc_files = st.file_uploader(
     label_visibility="collapsed",
     key="docs_upload",
 )
+
+# Inyectar JS para que el input acepte selección de carpeta
+components.html("""
+<script>
+(function() {
+    const parentDoc = window.parent.document;
+    function patchInput() {
+        const uploaders = parentDoc.querySelectorAll(
+            'section[data-testid="stFileUploaderDropzone"] input[type="file"]'
+        );
+        uploaders.forEach(function(inp, i) {
+            // Solo el segundo uploader (índice 1) es el de documentos
+            if (i === 1) {
+                inp.setAttribute('webkitdirectory', '');
+                inp.setAttribute('multiple', '');
+            }
+        });
+    }
+    patchInput();
+    const obs = new MutationObserver(patchInput);
+    obs.observe(parentDoc.body, { childList: true, subtree: true });
+})();
+</script>
+""", height=0)
 
 if doc_files:
     eir_files, bep_files = clasificar_archivos(doc_files)
